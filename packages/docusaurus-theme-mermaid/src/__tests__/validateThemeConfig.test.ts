@@ -6,8 +6,8 @@
  */
 
 import {
-  validateThemeConfig,
   DEFAULT_THEME_CONFIG,
+  validateThemeConfig,
 } from '../validateThemeConfig';
 import type {Joi} from '@docusaurus/utils-validation';
 import type {ThemeConfig, UserThemeConfig} from '@docusaurus/theme-mermaid';
@@ -63,6 +63,39 @@ describe('validateThemeConfig', () => {
     const mermaid = {
       options: {
         fontFamily: 'Ariel',
+      },
+    };
+    expect(testValidateThemeConfig({mermaid})).toEqual({
+      mermaid: {
+        theme: DEFAULT_THEME_CONFIG.mermaid.theme,
+        ...mermaid,
+      },
+    });
+  });
+
+  it('mermaid config with options', () => {
+    const mermaid = {
+      config: {
+      },
+      options: {
+      },
+    };
+    expect(() =>
+      testValidateThemeConfig({mermaid}),
+    ).toThrowErrorMatchingInlineSnapshot(
+      `"'options' is deprecated. Please use 'config' instead and remove 'options'."`,
+    );
+  });
+
+  it('mermaid config', () => {
+    const mermaid = {
+      config: {
+        light: {
+          fontFamily: 'Ariel',
+        },
+        dark: {
+          fontFamily: 'Ariel',
+        }
       },
     };
     expect(testValidateThemeConfig({mermaid})).toEqual({

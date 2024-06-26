@@ -15,9 +15,15 @@ export const DEFAULT_THEME_CONFIG: ThemeConfig = {
       dark: 'dark',
       light: 'default',
     },
-    options: {},
+    config: {
+      dark: {},
+      light: {},
+    },
   },
 };
+
+const configSchema = Joi.object().default({});
+const forbiddenSchema = Joi.forbidden().error(new Error("'options' is deprecated. Please use 'config' instead and remove 'options'."));
 
 export const Schema = Joi.object<ThemeConfig>({
   mermaid: Joi.object({
@@ -25,7 +31,19 @@ export const Schema = Joi.object<ThemeConfig>({
       dark: Joi.string().default(DEFAULT_THEME_CONFIG.mermaid.theme.dark),
       light: Joi.string().default(DEFAULT_THEME_CONFIG.mermaid.theme.light),
     }).default(DEFAULT_THEME_CONFIG.mermaid.theme),
-    options: Joi.object().default(DEFAULT_THEME_CONFIG.mermaid.options),
+    config: Joi.alternatives().conditional('options', {
+      is: Joi.exist(),
+      then: forbiddenSchema,
+      otherwise: Joi.object({
+        dark: configSchema,
+        light: configSchema,
+      }).default(DEFAULT_THEME_CONFIG.mermaid.config),
+    }),
+    options: Joi.alternatives().conditional('config', {
+      is: Joi.exist(),
+      then: forbiddenSchema,
+      otherwise: configSchema,
+    })
   }).default(DEFAULT_THEME_CONFIG.mermaid),
 });
 

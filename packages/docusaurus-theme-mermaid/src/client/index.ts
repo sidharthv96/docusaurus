@@ -23,11 +23,11 @@ export function useMermaidConfig(): MermaidConfig {
   const mermaidThemeConfig = useMermaidThemeConfig();
 
   const theme = mermaidThemeConfig.theme[colorMode];
-  const {options} = mermaidThemeConfig;
+  const config = mermaidThemeConfig.config?.[colorMode] ?? mermaidThemeConfig.options;
 
   return useMemo(
-    () => ({startOnLoad: false, ...options, theme}),
-    [theme, options],
+    () => ({startOnLoad: false, ...config, theme}),
+    [theme, config],
   );
 }
 
